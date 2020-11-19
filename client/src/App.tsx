@@ -1,41 +1,35 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import io from "socket.io-client";
+import "./assets/posttailwind.css";
 
-let endpoint = "http://localhost:5000";
+let endpoint = "http://localhost:8080";
 let socket = io(endpoint);
 
 const App = () => {
-  const [messages, setMessages] = useState<any>([]);
-  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      socket.emit("message", "This will run second");
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   socket.on("message", (msg: any) => {
-    setMessages([...messages, msg]);
+    setMessages(msg);
   });
 
-  const onChange = (event: any) => {
-    setMessage(event.target.value);
-  };
-
-  const onClick = () => {
-    socket.emit("message", message);
-    setMessage("");
-  };
-
   return (
-    <div className="App">
-      <h2>Messages</h2>
-      <div>
-        {messages.map((msg: any) => (
-          <p>{msg}</p>
-        ))}
+    <div className="w-1/4 text-center">
+      <div className="">
+        <span className="text-pink-500 text-3xl font-bold ">
+          <img className="w-10 h-10 inline" src="poki.png" />
+          {messages}
+        </span>
       </div>
-      <p>
-        <input type="text" onChange={onChange} value={message} />
-      </p>
-      <p>
-        <input type="button" onClick={onClick} value="Send" />
-      </p>
+      <h2 className="text-red-500 text-2xl font-bold">
+        Days without Pokimane Raiding
+      </h2>
     </div>
   );
 };
